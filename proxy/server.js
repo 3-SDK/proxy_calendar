@@ -1,5 +1,7 @@
 const express = require('express');
 
+const qs = require('qs');
+
 const app = express();
 const parser = require('body-parser');
 
@@ -14,53 +16,86 @@ app.use(express.static(__dirname + '/client'));
 app.use(parser.urlencoded({ extended: true }));
 
 app.get('/hotels/:id', (req, res) => {
-	const id = Number(req.params.id);
-
-	axios.get(`http://localhost:1128/hotels/${id}`)
+	axios.get(`http://localhost:1128/hotels/${req.params.id}`)
 		.then((response) => {
 			res.send(response.data);
 		})
 		.catch((err) => {
 			console.error(err);
+			res.sendStatus(400);
 		});
 });
 
 // Partner prices
 app.get('/hotels/:id/prices/room?', (req, res) => {
-	const id = Number(req.params.id);
-	const param = req.query.type;
-
-	axios.get(`http://localhost:1128/hotels/${id}/prices/room?type=${param}`)
+	axios.get(`http://localhost:1128/hotels/${req.params.id}/prices/room?type=${req.query.type}`)
 		.then((response) => {
 			res.json(response.data);
 		})
 		.catch((err) => {
 			console.error(err);
+			res.sendStatus(400);
 		});
 });
 
 app.put('/hotels/:id/prices/room?', (req, res) => {
-	const id = Number(req.params.id);
-	axios.put(`http://localhost:1128/hotels/${id}/`)
+	axios.put(`http://localhost:1128/hotels/${req.params.id}/prices/room?type=${req.query.type}`, qs.stringify(req.body))
+		.then((response) => {
+			console.log(response);
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.error(err);
+			res.sendStatus(400);
+		});
 });
 
 // Bookings
 app.get('/hotels/:id/bookings/', (req, res) => {
-	axios.get
+	axios.get(`http://localhost:1128/hotels/${req.params.id}/bookings`)
+		.then((response) => {
+			res.json(response.data);
+		})
+		.catch((err) => {
+			console.error(err);
+			res.sendStatus(400);
+		});
 });
 
 app.get('/hotels/:id/bookings/room?', (req, res) => {
-	axios.get
+	axios.get(`http://localhost:1128/hotels/${req.params.id}/bookings/room?type=${req.query.type}`)
+		.then((response) => {
+			res.json(response.data);
+		})
+		.catch((err) => {
+			console.error(err);
+			res.sendStatus(400);
+		});
 });
 
 app.post('/hotels/:id/bookings/', (req, res) => {
-	axios.post
+	axios.post(`http://localhost:1128/hotels/${req.params.id}/bookings`, qs.stringify(req.body))
+		.then((response) => {
+			console.log(response);
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.error(err);
+			res.sendStatus(400);
+		});
 });
 
 app.delete('/hotels/:id/bookings/:bookID', (req, res) => {
-	axios.delete
+	axios.delete(`http://localhost:1128/hotels/${req.params.id}/bookings/${req.params.bookID}`)
+		.then((response) => {
+			console.log(response);
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.error(err);
+			res.sendStatus(400);
+		});
 });
-
 
 // app.get('/calendar/:type/', (req, res) => {
 //     let type = req.params.type;
